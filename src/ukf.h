@@ -67,6 +67,11 @@ public:
   ///* Sigma point spreading parameter
   double lambda_;
 
+  ///* NIS for radar
+  double NIS_radar_;
+
+  ///* NIS for laser
+  double NIS_laser_;
 
   /**
    * Constructor
@@ -84,12 +89,20 @@ public:
    */
   void ProcessMeasurement(MeasurementPackage meas_package);
 
+  void Initialize(MeasurementPackage meas_package);
+  MatrixXd GenerateSigmaPoints();
+  MatrixXd AugmentSigmaPoints(MatrixXd Xsig);
+  void PredictSigmaPoints(MatrixXd Xsig_aug, double delta_t);
+  void PredictStateMeanAndCovariance();
+  void PredictRadarMeasMeanCov(VectorXd *z_pred_out, MatrixXd *S_out, MatrixXd *Zsig_out);
+  void PredictLidarMeasMeanCov(VectorXd *z_pred_out, MatrixXd *S_out, MatrixXd *Zsig_out);
+
   /**
    * Prediction Predicts sigma points, the state, and the state covariance
    * matrix
    * @param delta_t Time between k and k+1 in s
    */
-  void Prediction(double delta_t);
+  void Prediction(double delta_t, MeasurementPackage meas_package);
 
   /**
    * Updates the state and the state covariance matrix using a laser measurement
